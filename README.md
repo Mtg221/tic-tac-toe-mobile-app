@@ -24,7 +24,6 @@ the game to a mobile interface.
 - Expo
 - Expo Router
 
-## Installation
 
 Clone the repository:
 git clone <https://github.com/Mtg221/tic-tac-toe-mobile-app>
