@@ -1,56 +1,57 @@
-# Welcome to your Expo app 👋
+# Tic-Tac-Toe — React Native
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+## Description
 
-## Get started
+This project is a Tic-Tac-Toe game built with React Native,
+TypeScript, and Expo.
+It follows the official React Tic-Tac-Toe tutorial and adapts
+the game to a mobile interface.
 
-1. Install dependencies
+## Features
 
-   ```bash
-   npm install
-   ```
+- 3 x 3 game board
+- Two players: X and O
+- Automatic winner detection
+- Draw detection
+- Prevention of overwriting occupied squares
+- Game history and time travel
+- Mobile-friendly interface
 
-2. Start the app
+## Technologies
 
-   ```bash
-   npx expo start
-   ```
+- React Native
+- TypeScript
+- Expo
+- Expo Router
 
-In the output, you'll find options to open the app in a
+## Installation
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+Clone the repository:
+git clone <https://github.com/Mtg221/tic-tac-toe-mobile-app>
+Enter the project folder:
+cd tic-tac-toe
+Install dependencies:
+npm install
+Start Expo:
+npx expo start
+Open the application using Expo Go.
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+## Learning Objectives
 
-## Get a fresh project
+- Build reusable React components
+- Manage state with useState
+- Pass props between components
+- Handle user interactions
+- Use TypeScript types
+- Store and navigate through game history
 
-When you're ready, run:
+Open the application using Expo Go.
 
-```bash
-npm run reset-project
-```
+## Learning Objectives
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-### Other setup steps
-
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+- Build reusable React components
+- Manage state with useState
+- Pass props between components
+- Handle user interactions
+- Use TypeScript types
+- Store and navigate through game history

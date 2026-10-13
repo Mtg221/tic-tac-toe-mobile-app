@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 
 type SquareValue = "X" | "O" | null;
 
@@ -96,29 +96,74 @@ function Board({
 }
 
 export default function Game() {
-  const [squares, setSquares] = useState<SquareValue[]>(Array(9).fill(null));
-  const [xIsNext, setXIsNext] = useState(true);
+  const [history, setHistory] = useState<SquareValue[][]>([
+    Array(9).fill(null),
+  ]);
+  const [currentMove, setCurrentMove] = useState(0);
+
+  const currentSquares = history[currentMove];
+  const xIsNext = currentMove % 2 === 0;
 
   function handlePlay(nextSquares: SquareValue[]) {
-    setSquares(nextSquares);
-    setXIsNext(!xIsNext);
+    const nextHistory = [...history.slice(0, currentMove + 1), nextSquares];
+
+    setHistory(nextHistory);
+    setCurrentMove(nextHistory.length - 1);
   }
 
+  function jumpTo(nextMove: number) {
+    setCurrentMove(nextMove);
+  }
+
+  const moves = history.map((squares, move) => {
+    const description = move === 0 ? "Go to game start" : `Go to move #${move}`;
+
+    return {
+      move,
+      description,
+      squares,
+    };
+  });
+
   return (
-    <View style={styles.container}>
+    <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.title}>Tic-Tac-Toe</Text>
-      <Board xIsNext={xIsNext} squares={squares} onPlay={handlePlay} />
-    </View>
+
+      <Board xIsNext={xIsNext} squares={currentSquares} onPlay={handlePlay} />
+
+      <View style={styles.history}>
+        <Text style={styles.historyTitle}>Game History</Text>
+
+        {moves.map(({ move, description }) => (
+          <Pressable
+            key={move}
+            style={[
+              styles.moveButton,
+              move === currentMove && styles.currentMove,
+            ]}
+            onPress={() => jumpTo(move)}
+            accessibilityRole="button"
+          >
+            <Text style={styles.moveText}>
+              {move === currentMove
+                ? `Current position: ${description}`
+                : description}
+            </Text>
+          </Pressable>
+        ))}
+      </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: "#ffffff",
+    flexGrow: 1,
     alignItems: "center",
-    justifyContent: "center",
     padding: 20,
+    paddingTop: 60,
+    paddingBottom: 40,
+    backgroundColor: "#ffffff",
   },
   title: {
     fontSize: 30,
@@ -150,5 +195,29 @@ const styles = StyleSheet.create({
   squareText: {
     fontSize: 38,
     fontWeight: "bold",
+  },
+  history: {
+    width: "100%",
+    maxWidth: 300,
+    marginTop: 28,
+    gap: 8,
+  },
+  historyTitle: {
+    fontSize: 22,
+    fontWeight: "bold",
+    marginBottom: 4,
+  },
+  moveButton: {
+    padding: 12,
+    borderWidth: 1,
+    borderColor: "#cccccc",
+    borderRadius: 6,
+  },
+  currentMove: {
+    backgroundColor: "#e8e8e8",
+    borderColor: "#222222",
+  },
+  moveText: {
+    fontSize: 16,
   },
 });
