@@ -20,7 +20,6 @@ function Square({ value, onSquareClick }: SquareProps) {
     </Pressable>
   );
 }
-
 function calculateWinner(squares: SquareValue[]) {
   const lines = [
     [0, 1, 2],
