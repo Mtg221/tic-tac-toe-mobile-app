@@ -73,10 +73,12 @@ function Board({
   xIsNext,
   squares,
   onPlay,
+  onRestart,
 }: {
   xIsNext: boolean;
   squares: SquareValue[];
   onPlay: (nextSquares: SquareValue[]) => void;
+  onRestart?: () => void;
 }) {
   const { colors } = useTheme();
 
@@ -95,6 +97,7 @@ function Board({
   }
 
   const isDraw = !winner && squares.every((square) => square !== null);
+  const isGameOver = Boolean(winner) || isDraw;
 
   let status = `Next player: ${xIsNext ? "X" : "O"}`;
 
@@ -124,6 +127,27 @@ function Board({
           })}
         </View>
       ))}
+
+      {isGameOver && onRestart && (
+        <Pressable
+          style={({ pressed }) => [
+            styles.restartButton,
+            {
+              backgroundColor: colors.primary,
+              opacity: pressed ? 0.8 : 1,
+            },
+          ]}
+          onPress={onRestart}
+          accessibilityRole="button"
+          accessibilityLabel="Restart"
+        >
+          <Text
+            style={[styles.restartButtonText, { color: colors.primaryText }]}
+          >
+            Restart
+          </Text>
+        </Pressable>
+      )}
     </View>
   );
 }
@@ -149,6 +173,11 @@ export default function Game() {
     setCurrentMove(nextMove);
   }
 
+  function handleRestart() {
+    setHistory([Array(9).fill(null)]);
+    setCurrentMove(0);
+  }
+
   const moves = history.map((squares, move) => {
     const description = move === 0 ? "Go to game start" : `Go to move #${move}`;
 
@@ -166,7 +195,12 @@ export default function Game() {
     >
       <Text style={[styles.title, { color: colors.text }]}>Tic-Tac-Toe</Text>
 
-      <Board xIsNext={xIsNext} squares={currentSquares} onPlay={handlePlay} />
+      <Board
+        xIsNext={xIsNext}
+        squares={currentSquares}
+        onPlay={handlePlay}
+        onRestart={handleRestart}
+      />
 
       <View style={styles.history}>
         <Text style={[styles.historyTitle, { color: colors.text }]}>
@@ -260,6 +294,18 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: "bold",
     marginBottom: 4,
+  },
+  restartButton: {
+    marginTop: 8,
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 8,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  restartButtonText: {
+    fontSize: 16,
+    fontWeight: "bold",
   },
   moveButton: {
     padding: 12,

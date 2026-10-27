@@ -21,6 +21,7 @@ It features a 3x3 game board with time travel, drawer navigation, and light/dark
 
 - **3 x 3 Game Board**: Interactive board with two players (X and O).
 - **Automatic Winner & Draw Detection**: Real-time detection with winning line highlighting.
+- **Restart Button**: Appears when a game finishes (win or draw) to easily reset and start a new game.
 - **Game History & Time Travel**: Jump back to any prior move without losing state across screen visits.
 - **Drawer Navigation**: Drawer menu with Game, Settings, and About screens (accessible via swipe or header menu button).
 - **Light & Dark Themes**: Global theme management via React Context with immediate updates across all screens, headers, drawer, and status bar.
