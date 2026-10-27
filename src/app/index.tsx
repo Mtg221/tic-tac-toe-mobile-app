@@ -1,26 +1,54 @@
 import { useState } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { useTheme } from "../context/ThemeContext";
 
 type SquareValue = "X" | "O" | null;
 
 type SquareProps = {
   value: SquareValue;
   onSquareClick: () => void;
+  isWinningSquare?: boolean;
 };
 
-function Square({ value, onSquareClick }: SquareProps) {
+function Square({ value, onSquareClick, isWinningSquare }: SquareProps) {
+  const { colors } = useTheme();
+
+  const squareBgColor = isWinningSquare
+    ? colors.winningSquareBackground
+    : colors.card;
+
+  const squareTextColor = isWinningSquare
+    ? colors.winningSquareText
+    : value === "X"
+    ? colors.playerX
+    : colors.playerO;
+
   return (
     <Pressable
-      style={styles.square}
+      style={[
+        styles.square,
+        {
+          borderColor: isWinningSquare ? colors.primary : colors.border,
+          backgroundColor: squareBgColor,
+        },
+      ]}
       onPress={onSquareClick}
       accessibilityRole="button"
       accessibilityLabel={value ? `Square ${value}` : "Empty square"}
     >
-      <Text style={styles.squareText}>{value}</Text>
+      <Text style={[styles.squareText, { color: squareTextColor }]}>
+        {value}
+      </Text>
     </Pressable>
   );
 }
-function calculateWinner(squares: SquareValue[]) {
+
+type WinResult = {
+  winner: SquareValue;
+  line: number[];
+} | null;
+
+function calculateWinner(squares: SquareValue[]): WinResult {
   const lines = [
     [0, 1, 2],
     [3, 4, 5],
@@ -34,7 +62,7 @@ function calculateWinner(squares: SquareValue[]) {
 
   for (const [a, b, c] of lines) {
     if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-      return squares[a];
+      return { winner: squares[a], line: [a, b, c] };
     }
   }
 
@@ -50,8 +78,14 @@ function Board({
   squares: SquareValue[];
   onPlay: (nextSquares: SquareValue[]) => void;
 }) {
+  const { colors } = useTheme();
+
+  const winResult = calculateWinner(squares);
+  const winner = winResult?.winner ?? null;
+  const winningLine = winResult?.line ?? [];
+
   function handleClick(i: number) {
-    if (squares[i] || calculateWinner(squares)) {
+    if (squares[i] || winner) {
       return;
     }
 
@@ -60,7 +94,6 @@ function Board({
     onPlay(nextSquares);
   }
 
-  const winner = calculateWinner(squares);
   const isDraw = !winner && squares.every((square) => square !== null);
 
   let status = `Next player: ${xIsNext ? "X" : "O"}`;
@@ -73,7 +106,7 @@ function Board({
 
   return (
     <View style={styles.board}>
-      <Text style={styles.status}>{status}</Text>
+      <Text style={[styles.status, { color: colors.text }]}>{status}</Text>
 
       {[0, 1, 2].map((row) => (
         <View key={row} style={styles.row}>
@@ -84,6 +117,7 @@ function Board({
               <Square
                 key={i}
                 value={squares[i]}
+                isWinningSquare={winningLine.includes(i)}
                 onSquareClick={() => handleClick(i)}
               />
             );
@@ -95,6 +129,7 @@ function Board({
 }
 
 export default function Game() {
+  const { colors } = useTheme();
   const [history, setHistory] = useState<SquareValue[][]>([
     Array(9).fill(null),
   ]);
@@ -125,31 +160,53 @@ export default function Game() {
   });
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.title}>Tic-Tac-Toe</Text>
+    <ScrollView
+      contentContainerStyle={styles.container}
+      style={{ backgroundColor: colors.background }}
+    >
+      <Text style={[styles.title, { color: colors.text }]}>Tic-Tac-Toe</Text>
 
       <Board xIsNext={xIsNext} squares={currentSquares} onPlay={handlePlay} />
 
       <View style={styles.history}>
-        <Text style={styles.historyTitle}>Game History</Text>
+        <Text style={[styles.historyTitle, { color: colors.text }]}>
+          Game History
+        </Text>
 
-        {moves.map(({ move, description }) => (
-          <Pressable
-            key={move}
-            style={[
-              styles.moveButton,
-              move === currentMove && styles.currentMove,
-            ]}
-            onPress={() => jumpTo(move)}
-            accessibilityRole="button"
-          >
-            <Text style={styles.moveText}>
-              {move === currentMove
-                ? `Current position: ${description}`
-                : description}
-            </Text>
-          </Pressable>
-        ))}
+        {moves.map(({ move, description }) => {
+          const isCurrent = move === currentMove;
+
+          return (
+            <Pressable
+              key={move}
+              style={[
+                styles.moveButton,
+                {
+                  borderColor: isCurrent ? colors.primary : colors.border,
+                  backgroundColor: isCurrent
+                    ? colors.currentMoveBackground
+                    : colors.card,
+                },
+              ]}
+              onPress={() => jumpTo(move)}
+              accessibilityRole="button"
+            >
+              <Text
+                style={[
+                  styles.moveText,
+                  {
+                    color: isCurrent ? colors.primary : colors.text,
+                    fontWeight: isCurrent ? "700" : "500",
+                  },
+                ]}
+              >
+                {move === currentMove
+                  ? `Current position: ${description}`
+                  : description}
+              </Text>
+            </Pressable>
+          );
+        })}
       </View>
     </ScrollView>
   );
@@ -160,9 +217,8 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     alignItems: "center",
     padding: 20,
-    paddingTop: 60,
+    paddingTop: 30,
     paddingBottom: 40,
-    backgroundColor: "#ffffff",
   },
   title: {
     fontSize: 30,
@@ -186,8 +242,7 @@ const styles = StyleSheet.create({
     width: 90,
     height: 90,
     borderWidth: 2,
-    borderColor: "#222222",
-    backgroundColor: "#f5f5f5",
+    borderRadius: 8,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -209,12 +264,7 @@ const styles = StyleSheet.create({
   moveButton: {
     padding: 12,
     borderWidth: 1,
-    borderColor: "#cccccc",
     borderRadius: 6,
-  },
-  currentMove: {
-    backgroundColor: "#e8e8e8",
-    borderColor: "#222222",
   },
   moveText: {
     fontSize: 16,
